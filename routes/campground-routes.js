@@ -1,5 +1,6 @@
 const router = require("express").Router({ mergeParams: true });
-const Campground = require("../models").Campground;
+const { Campground, User } = require("../models");
+const { isLoggedIn } = require("../auth-middlewares");
 // ======================================================================
 // @route   GET   /campgrounds
 // @desc    Retrieve all campgrounds from database and display them
@@ -24,7 +25,7 @@ router.get("/", (req, res) => {
 // @desc     SHOW FORM FOR ADDING NEW CAMPGROUND
 // @access   PUBLIC
 // ======================================================================
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new-campground.ejs");
 });
 
@@ -33,14 +34,31 @@ router.get("/new", (req, res) => {
 // @desc      ADD NEW CAMPGROUND TO THE DATABASE AND REDIRECT TO CAMPGROUNDS PAGE
 // @access    PRIVATE
 
-router.post("/", (req, res) => {
+router.post("/", isLoggedIn, (req, res) => {
   const campground = req.body.campground;
-  Campground.create(campground)
-    .then(dbCampground => {
-      res.redirect("/campgrounds");
+  campground.author = req.user;
+  User.findById(req.user.id)
+    .then(dbUser => {
+      Campground.create(campground)
+        .then(dbCampground => {
+          dbUser.campgrounds.push(dbCampground);
+          dbUser
+            .save()
+            .then(() => {
+              res.redirect("/campgrounds");
+            })
+            .catch(err => {
+              console.log("Error saving user while creating new campground");
+              res.redirect("/campgrounds");
+            });
+        })
+        .catch(err => {
+          console.log("Error creating new campground");
+          res.redirect("/campgrounds");
+        });
     })
     .catch(err => {
-      console.log("Error creating new campground");
+      console.log("User not found while creating new campground");
       res.redirect("/campgrounds");
     });
 });
@@ -50,15 +68,23 @@ router.post("/", (req, res) => {
 // @access  PUBLIC
 router.get("/:campgroundId", (req, res) => {
   Campground.findById(req.params.campgroundId)
-    .then(dbCampground => {
+    .populate("author")
+    .exec((err, dbCampground) => {
+      if (err) {
+        console.log("Campground Not Found");
+        return res.redirect("/campgrounds");
+      }
       res.render("campgrounds/show-campground.ejs", {
         ejsCampground: dbCampground
       });
-    })
-    .catch(err => {
-      console.log("Campground Not Found");
-      res.redirect("/campgrounds");
     });
+  // .then(dbCampground => {
+
+  //   });
+  // })
+  // .catch(err => {
+
+  // });
 });
 // ======================================================================
 module.exports = router;

@@ -5,7 +5,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const LocalStrategy = require("passport-local");
 const expressSession = require("express-session");
-const User = require("./models").User;
+const { User } = require("./models");
 //=================================================================
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -38,13 +38,17 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 //=================================================================
 //  ROUTES  CONFIGURATION
-const campgrounds = require("./routes/campground-routes.js");
-const indexRoutes = require("./routes/index-routes.js");
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
+
+const { userRoutes, campgroundRoutes, indexRoutes } = require("./routes");
+app.use("/users", userRoutes);
 app.use("/", indexRoutes);
-app.use("/campgrounds", campgrounds);
+app.use("/campgrounds", campgroundRoutes);
 //=================================================================
 const PORT = process.env.PORT || 3000;
 
