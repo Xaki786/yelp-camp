@@ -32,5 +32,24 @@ router.post("/register", (req, res) => {
     });
 });
 //===============================================================================
+// @route   GET   /login
+// @desc    SHOW LOGIN FORM TO THE USER
+// @access  PUBLIC
+router.get("/login", (req, res) => {
+  res.render("users/login-user.ejs");
+});
+//===============================================================================
+// @route   POST  /login
+// @desc    LOGIN THE USER AND REDIRECT TO THE CAMPGROUNDS PAGE
+// @access  PUBLIC
+router.post(
+  "/login",
+  passpoprt.authenticate("local", {
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+  }),
+  (req, res) => {}
+);
+//===============================================================================
 
 module.exports = router;
