@@ -1,0 +1,31 @@
+<%include ../partials/header.ejs%>
+<div class="jumbotron">
+  <h1 class="h2">Welcome to Campgrounds Page</h1>
+  <a href="/campgrounds/new" class="btn btn-primary mt-3">Add New Campground</a>
+</div>
+<div>
+  <%if(ejsCampgrounds && ejsCampgrounds.length > 0){%>
+  <div class="row">
+    <%ejsCampgrounds.forEach(ejsCampground => {%>
+    <div class="col-md-4 col-lg-3">
+      <a href="/campgrounds/<%=ejsCampground.id%>">
+        <figure class="figure">
+          <img
+            class="figure-img img-fluid rounded"
+            src="<%=ejsCampground.url%>"
+            alt="<%=ejsCampground.name%>"
+            title="<%=ejsCampground.name%>"
+          />
+          <figcaption class="figure-caption text-center">
+            <%=ejsCampground.name%>
+          </figcaption>
+        </figure>
+      </a>
+    </div>
+    <%})%>
+  </div>
+  <%}else{%>
+  <h3>Campgrounds comming soon...</h3>
+  <%}%>
+</div>
+<%include ../partials/footer.ejs%>
