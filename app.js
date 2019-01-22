@@ -5,9 +5,11 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const LocalStrategy = require("passport-local");
 const expressSession = require("express-session");
+const methodOverride = require("method-override");
 const { User } = require("./models");
 //=================================================================
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 //=================================================================
 // DATABASE CONFIGURATION

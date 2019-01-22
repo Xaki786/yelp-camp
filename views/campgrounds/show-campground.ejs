@@ -18,11 +18,25 @@
           alt="<%=ejsCampground.name%>"
         />
         <figcaption class="figure-caption d-flex">
-          <span class="ml-3 mr-auto font-italic"
-            ><%=ejsCampground.author.username %></span
+          <span class="mr-auto"><%=ejsCampground.name %></span>
+          <span class="ml-auto font-italic"
+            >Submitted by
+            <strong><%=ejsCampground.author.username %></strong>-</span
           >
           <span class="mr-3 font-italic">Date Created</span>
         </figcaption>
+        <div class="d-flex my-2">
+          <div class="ml-auto">
+            <a
+              href="/campgrounds/<%=ejsCampground.id%>/edit"
+              class="btn btn-sm btn-info"
+              >Edit</a
+            >
+          </div>
+          <div class="mr-3 ml-1">
+            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+          </div>
+        </div>
       </figure>
       <div class="card-body">
         <h5 class="card-title">Description</h5>
