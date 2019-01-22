@@ -18,12 +18,10 @@
           alt="<%=ejsCampground.name%>"
         />
         <figcaption class="figure-caption d-flex">
-          <span class="mr-auto"><%=ejsCampground.name %></span>
-          <span class="ml-auto font-italic"
-            >Submitted by
-            <strong><%=ejsCampground.author.username %></strong>-</span
-          >
-          <span class="mr-3 font-italic">Date Created</span>
+          <div class="mr-auto"><%=ejsCampground.name %></div>
+          <div class="ml-auto font-italic">Submitted by:&nbsp</div>
+          <strong><%=ejsCampground.author.username %></strong>-
+          <div class="mr-1 font-italic">Date Created</div>
         </figcaption>
         <div class="d-flex my-2">
           <div class="ml-auto">
@@ -34,7 +32,12 @@
             >
           </div>
           <div class="mr-3 ml-1">
-            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+            <form
+              action="/campgrounds/<%=ejsCampground.id%>?_method=DELETE"
+              method="POST"
+            >
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
           </div>
         </div>
       </figure>

@@ -123,5 +123,24 @@ router.put(
   }
 );
 //=================================================================
+// @route   DELETE    /campgrounds/:campgroundId
+// @desc    FIND CAMPGROUND FROM THE DATABASE AND DELETE IT
+// @access  PROTECTED
+router.delete(
+  "/:campgroundId",
+  isLoggedIn,
+  checkCampgroundOwnership,
+  (req, res) => {
+    Campground.findByIdAndDelete(req.params.campgroundId)
+      .then(() => {
+        res.redirect("/campgrounds");
+      })
+      .catch(err => {
+        console.log("Can not delete a campground");
+        res.redirect(`/campgrounds/${req.params.campgroundId}`);
+      });
+  }
+);
+//=================================================================
 
 module.exports = router;
