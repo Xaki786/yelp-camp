@@ -1,4 +1,4 @@
-const Campground = require("./models").Campground;
+const { Campground } = require("./models");
 const campgrounds = [
   {
     name: "Virginia State Parks",
@@ -44,7 +44,10 @@ module.exports = function() {
       console.log("DELETED ALL SEED");
       // campgrounds.forEach(campground => {
       //   Campground.create(campground)
-      //     .then(dbCampground => console.log(dbCampground.name))
+      //     .then(dbCampground => {
+      //       console.log(dbCampground.name);
+
+      //     })
       //     .catch(err => console.log("Error creating new campground from seed"));
       // });
     })

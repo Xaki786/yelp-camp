@@ -8,6 +8,7 @@ const expressSession = require("express-session");
 const methodOverride = require("method-override");
 const { User } = require("./models");
 //=================================================================
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
@@ -47,10 +48,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const { userRoutes, campgroundRoutes, indexRoutes } = require("./routes");
+const {
+  userRoutes,
+  campgroundRoutes,
+  indexRoutes,
+  commentRoutes
+} = require("./routes");
 app.use("/users", userRoutes);
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:campgroundId", commentRoutes);
 //=================================================================
 const PORT = process.env.PORT || 3000;
 

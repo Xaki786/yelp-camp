@@ -69,6 +69,7 @@ router.post("/", isLoggedIn, (req, res) => {
 router.get("/:campgroundId", (req, res) => {
   Campground.findById(req.params.campgroundId)
     .populate("author")
+    .populate("comments")
     .exec((err, dbCampground) => {
       if (err) {
         console.log("Campground Not Found");

@@ -42,10 +42,27 @@
         </div>
       </figure>
       <div class="card-body">
-        <h5 class="card-title">Description</h5>
+        <div class="d-flex">
+          <div class="mr-auto"><h5 class="card-title">Description</h5></div>
+          <div class="ml-auto">
+            <a
+              href="/campgrounds/<%=ejsCampground.id%>/comments/new"
+              class="btn btn-success btn-sm"
+              >Leave Review</a
+            >
+          </div>
+        </div>
         <p class="card-text"><%= ejsCampground.desc %></p>
       </div>
     </div>
+    <ul class="list-group">
+      <%if(ejsCampground.comments && ejsCampground.comments.length > 0){%>
+      <%ejsCampground.comments.forEach(ejsComment => {%>
+      <li class="list-group-item"><%=ejsComment.text %></li>
+      <%})}else{%>
+      <li class="list-group-item">Be the first to review the campground</li>
+      <%}%>
+    </ul>
   </div>
   <%}else{%>
   <h1>Campground Not Found</h1>
