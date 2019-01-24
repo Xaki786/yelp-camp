@@ -48,4 +48,69 @@ router.post("/comments", isLoggedIn, (req, res) => {
     });
 });
 // =======================================================================
+// @route   GET   /campgrounds/:campgroundId/comments/:commentId/edit
+// @desc    FIND COMMENT FROM DATABASE AND REDIRECT USER TO THE COMMENT EDIT FORM
+// @access  PRIVATE
+router.get("/comments/:commentId/edit", (req, res) => {
+  Comment.findById(req.params.commentId)
+    .then(dbComment => {
+      res.render("comments/edit-comment.ejs", {
+        ejsComment: dbComment,
+        campgroundId: req.params.campgroundId
+      });
+    })
+    .catch(err => {
+      console.log("Can not find comment while showing edit form");
+      res.redirect(`/campgrounds/${req.params.campgroundId}`);
+    });
+});
+// =======================================================================
+// @route   PUT   /campgrounds/:campgroundId/comments/:commentId
+// @desc    FIND COMMENT FROM THE DATABASE AND UPDATE IT.
+//          THEN REDIRECT USER TO THE CAMPGROUND SHOW PAGE
+// @access  PRIVATE
+router.put("/comments/:commentId", (req, res) => {
+  Comment.findByIdAndUpdate(req.params.commentId, req.body.comment, {
+    new: true
+  })
+    .then(dbComment => {
+      res.redirect(`/campgrounds/${req.params.campgroundId}`);
+    })
+    .catch(err => {
+      console.log("Can not find comment while adding edited comment");
+      res.redirect(`/campgrounds/${req.params.campgroundId}`);
+    });
+});
+// =======================================================================
+// @route   DELETE    /campgrounds/:campgroundId/comments/:commentId
+// @desc    FIND A COMMENT FROM DATABASE AND DELETE IT...ALSO DELETE IT
+//          FROM AUTHOR AND CAMPGROUNDS AND AUTHORS LISTINGS
+// @access  PROTECTED
+router.delete("/comments/:commentId", (req, res) => {
+  Campground.findById(req.params.campgroundId)
+    .then(dbCampground => {
+      dbCampground.comments.pull(req.params.commentId);
+      dbCampground
+        .save()
+        .then(dbCampground => {
+          Comment.findByIdAndDelete(req.params.commentId)
+            .then(dbComment => {
+              res.redirect(`/campgrounds/${req.params.campgroundId}`);
+            })
+            .catch(err => {
+              console.log("Can not find comment while deleting comment");
+              res.redirect(`/campgrounds/${req.params.campgroundId}`);
+            });
+        })
+        .catch(err => {
+          console.log("Can not save campground while deleting comment");
+          res.redirect(`/campgrounds/${req.params.campgroundId}`);
+        });
+    })
+    .catch(err => {
+      console.log("Can not find campground while deleting comment");
+      res.redirect(`/campgrounds/${req.params.campgroundId}`);
+    });
+});
+// =======================================================================
 module.exports = router;

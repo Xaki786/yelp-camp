@@ -67,18 +67,20 @@ router.post("/", isLoggedIn, (req, res) => {
 // @desc    FIND SPECIFIC CAMPGROUND FROM DATABASE AND RENDER ITS SHOW PAGE
 // @access  PUBLIC
 router.get("/:campgroundId", (req, res) => {
-  Campground.findById(req.params.campgroundId)
-    .populate("author")
-    .populate("comments")
-    .exec((err, dbCampground) => {
-      if (err) {
-        console.log("Campground Not Found");
-        return res.redirect("/campgrounds");
-      }
-      res.render("campgrounds/show-campground.ejs", {
-        ejsCampground: dbCampground
-      });
+  Campground.findById(req.params.campgroundId).populate('author').populate({
+    path: 'comments',
+    populate: {
+      path: 'author'
+    }
+  }).exec((err, dbCampground) => {
+    if (err) {
+      console.log("Campground Not Found", err);
+      return res.redirect("/campgrounds");
+    }
+    res.render("campgrounds/show-campground.ejs", {
+      ejsCampground: dbCampground
     });
+  })
 });
 // ======================================================================
 // @route   GET   /campgrounds/:campgroundId/edit

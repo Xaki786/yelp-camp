@@ -20,14 +20,14 @@
         <figcaption class="figure-caption d-flex">
           <div class="mr-auto"><%=ejsCampground.name %></div>
           <div class="ml-auto font-italic">Submitted by:&nbsp</div>
-          <strong><%=ejsCampground.author.username %></strong>-
+          <strong> <%=ejsCampground.author.username %></strong>-
           <div class="mr-1 font-italic">Date Created</div>
         </figcaption>
         <div class="d-flex my-2">
           <div class="ml-auto">
             <a
               href="/campgrounds/<%=ejsCampground.id%>/edit"
-              class="btn btn-sm btn-info"
+              class="btn btn-sm btn-outline-info"
               >Edit</a
             >
           </div>
@@ -36,7 +36,7 @@
               action="/campgrounds/<%=ejsCampground.id%>?_method=DELETE"
               method="POST"
             >
-              <button class="btn btn-sm btn-danger">Delete</button>
+              <button class="btn btn-sm btn-outline-danger">Delete</button>
             </form>
           </div>
         </div>
@@ -47,7 +47,7 @@
           <div class="ml-auto">
             <a
               href="/campgrounds/<%=ejsCampground.id%>/comments/new"
-              class="btn btn-success btn-sm"
+              class="btn btn-outline-success btn-sm"
               >Leave Review</a
             >
           </div>
@@ -58,7 +58,28 @@
     <ul class="list-group">
       <%if(ejsCampground.comments && ejsCampground.comments.length > 0){%>
       <%ejsCampground.comments.forEach(ejsComment => {%>
-      <li class="list-group-item"><%=ejsComment.text %></li>
+      <li class="list-group-item d-flex">
+        <div class="mr-auto"><%=ejsComment.text %></div>
+        <div class="font-weight-bold font-italic small ml-auto">
+          <%=ejsComment.author.username%>
+        </div>
+        <small class="font-italic">- Date</small>
+        <div class="mx-2 small">
+          <a
+            href="/campgrounds/<%=ejsCampground.id%>/comments/<%=ejsComment.id%>/edit"
+            class="btn btn-sm btn-outline-secondary"
+            >Edit</a
+          >
+        </div>
+        <div>
+          <form
+            action="/campgrounds/<%=ejsCampground.id%>/comments/<%=ejsComment.id%>?_method=DELETE"
+            method="POST"
+          >
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </li>
       <%})}else{%>
       <li class="list-group-item">Be the first to review the campground</li>
       <%}%>
