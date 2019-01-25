@@ -1,4 +1,4 @@
-const { Campground, User } = require("../models");
+const { Campground, User, Comment } = require("../models");
 const mongoose = require("mongoose");
 const passport = require("passport");
 module.exports = {
@@ -18,6 +18,19 @@ module.exports = {
       })
       .catch(err => {
         console.log("Campground not found during autherization", err);
+        res.redirect(`/campgrounds/${req.params.campgroundId}`);
+      });
+  },
+  checkCommentOwnership: function(req, res, next) {
+    Comment.findById(req.params.commentId)
+      .then(dbComment => {
+        if (dbComment.author.equals(req.user.id)) {
+          return next();
+        }
+        return res.redirect(`/campgrounds/${req.params.campgroundId}`);
+      })
+      .catch(err => {
+        console.log("Comment not found during autherization");
         res.redirect(`/campgrounds/${req.params.campgroundId}`);
       });
   }

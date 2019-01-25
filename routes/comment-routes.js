@@ -1,11 +1,12 @@
 const router = require("express").Router({ mergeParams: true });
 const { Campground, Comment, User } = require("../models");
-const { isLoggedIn } = require("../auth-middlewares");
+const { isLoggedIn, checkCommentOwnership } = require("../auth-middlewares");
+router.use(isLoggedIn);
 // =======================================================================
 // @route   GET   /campgrounds/:campgroundId/comments/new
 // @desc    SHOW USER A NEW COMMENT FORM IF HE IS AUTHENTICATED
 // @access  PROTECTED
-router.get("/comments/new", isLoggedIn, (req, res) => {
+router.get("/comments/new", (req, res) => {
   Campground.findById(req.params.campgroundId)
     .then(dbCampground => {
       res.render("comments/new-comment.ejs", { ejsCampground: dbCampground });
@@ -19,7 +20,7 @@ router.get("/comments/new", isLoggedIn, (req, res) => {
 // @route   POST    /campgrounds/:campgroundId/comments
 // @desc    ADD NEW COMMENT TO THE DATABASE AND REDIRECT TO THE CAMPGROUND SHOW PAGE
 // @access  PRIVATE
-router.post("/comments", isLoggedIn, (req, res) => {
+router.post("/comments", (req, res) => {
   const newComment = req.body.comment;
   newComment.author = req.user;
   Comment.create(newComment)
@@ -51,7 +52,7 @@ router.post("/comments", isLoggedIn, (req, res) => {
 // @route   GET   /campgrounds/:campgroundId/comments/:commentId/edit
 // @desc    FIND COMMENT FROM DATABASE AND REDIRECT USER TO THE COMMENT EDIT FORM
 // @access  PRIVATE
-router.get("/comments/:commentId/edit", (req, res) => {
+router.get("/comments/:commentId/edit", checkCommentOwnership, (req, res) => {
   Comment.findById(req.params.commentId)
     .then(dbComment => {
       res.render("comments/edit-comment.ejs", {
@@ -69,7 +70,7 @@ router.get("/comments/:commentId/edit", (req, res) => {
 // @desc    FIND COMMENT FROM THE DATABASE AND UPDATE IT.
 //          THEN REDIRECT USER TO THE CAMPGROUND SHOW PAGE
 // @access  PRIVATE
-router.put("/comments/:commentId", (req, res) => {
+router.put("/comments/:commentId", checkCommentOwnership, (req, res) => {
   Comment.findByIdAndUpdate(req.params.commentId, req.body.comment, {
     new: true
   })
@@ -86,7 +87,7 @@ router.put("/comments/:commentId", (req, res) => {
 // @desc    FIND A COMMENT FROM DATABASE AND DELETE IT...ALSO DELETE IT
 //          FROM AUTHOR AND CAMPGROUNDS AND AUTHORS LISTINGS
 // @access  PROTECTED
-router.delete("/comments/:commentId", (req, res) => {
+router.delete("/comments/:commentId", checkCommentOwnership, (req, res) => {
   Campground.findById(req.params.campgroundId)
     .then(dbCampground => {
       dbCampground.comments.pull(req.params.commentId);
